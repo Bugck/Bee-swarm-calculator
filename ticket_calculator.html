@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bee Swarm Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: #fffbeb;
+        }
+
+        .bee-gradient {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid #fef3c7;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .tab-active {
+            border-bottom: 4px solid #f59e0b;
+            color: #92400e;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex items-center justify-center">
+
+    <div class="max-w-2xl w-full">
+        <!-- Header -->
+        <div class="bee-gradient p-6 rounded-t-3xl shadow-lg text-white text-center">
+            <h1 class="text-3xl font-bold flex items-center justify-center gap-3">
+                <span>🐝</span> BSS Multi-Calculator
+            </h1>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex bg-amber-100/50 border-x-2 border-amber-100">
+            <button onclick="switchTab('tickets')" id="tab-tickets" class="flex-1 py-4 text-sm uppercase tracking-wider font-semibold text-amber-700 transition-all tab-active">
+                Tickets
+            </button>
+            <button onclick="switchTab('treats')" id="tab-treats" class="flex-1 py-4 text-sm uppercase tracking-wider font-semibold text-amber-700 transition-all">
+                Treats & Levels
+            </button>
+        </div>
+
+        <!-- Main Card -->
+        <div class="card p-6 md:p-8 rounded-b-3xl shadow-xl border-t-0">
+            
+            <!-- Ticket Section -->
+            <div id="section-tickets">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-amber-900 mb-1">Already Owned (n)</label>
+                            <input type="number" id="owned" value="0" min="0" 
+                                class="w-full p-3 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-amber-900 mb-1">Amount to Buy</label>
+                            <input type="number" id="toBuy" value="1" min="1"
+                                class="w-full p-3 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-2xl text-xs text-amber-800 border border-amber-100">
+                        <h3 class="font-bold mb-2 uppercase tracking-wider">Ticket Formula:</h3>
+                        <p class="mb-2"><strong>n ≤ 500:</strong> 100k + 1000n<sup>1.2</sup></p>
+                        <p><strong>n ≥ 501:</strong> 100k + 1000n<sup>1.7</sup></p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-white border-2 border-amber-100 rounded-2xl p-4 shadow-sm">
+                        <div class="text-sm text-amber-700 font-medium">Cost of Next Ticket</div>
+                        <div id="nextTicketPrice" class="text-2xl font-bold text-amber-900">100,000</div>
+                    </div>
+                    <div class="bee-gradient rounded-2xl p-5 shadow-md text-white">
+                        <div class="text-sm font-medium opacity-90">Total Cost for <span id="displayCount">1</span> Tickets</div>
+                        <div id="totalCost" class="text-3xl font-bold">100,000</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Treats Section -->
+            <div id="section-treats" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-amber-900 mb-1">Target Level</label>
+                            <input type="number" id="targetLevel" value="10" min="1"
+                                class="w-full p-3 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-amber-900 mb-1">Total Number of Bees</label>
+                            <input type="number" id="beeCount" value="50" min="1"
+                                class="w-full p-3 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none">
+                        </div>
+
+                        <div class="bg-amber-50/50 p-4 rounded-xl border border-dashed border-amber-200 space-y-3">
+                            <div>
+                                <label id="labelOutlierCount" class="block text-xs font-bold text-amber-800 mb-1 uppercase">How many bees are NOT level 9?</label>
+                                <input type="number" id="outlierCount" value="0" min="0"
+                                    class="w-full p-2 text-sm rounded-lg border border-amber-200 focus:border-amber-400 outline-none">
+                            </div>
+                            <div id="outlierListContainer">
+                                <label class="block text-xs font-bold text-amber-800 mb-1 uppercase">Enter level for each bee (e.g., "8 8 7 5")</label>
+                                <input type="text" id="outlierLevelsInput" value=""
+                                    class="w-full p-2 text-sm rounded-lg border border-amber-200 focus:border-amber-400 outline-none"
+                                    placeholder="Separated by spaces">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-amber-900 mb-1">Bond from Treats (Default 10)</label>
+                            <input type="number" id="bondPerTreat" value="10" min="1"
+                                class="w-full p-3 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-amber-900 mb-1">Treats in Inventory</label>
+                            <input type="number" id="inventoryTreats" value="0" min="0"
+                                class="w-full p-3 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none">
+                        </div>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-2xl text-xs text-amber-800 border border-amber-100 overflow-y-auto max-h-[400px]">
+                        <h3 class="font-bold mb-2 uppercase tracking-wider">Leveling Formula:</h3>
+                        <p class="italic text-[10px] leading-relaxed mb-4">
+                            ((Total Bond Required / Bond Per Treat) - Inventory) × 10,000
+                        </p>
+                        
+                        <div class="p-2 bg-white rounded border border-amber-200 space-y-2">
+                            <strong>Custom Bond Table:</strong>
+                            <div class="grid grid-cols-2 gap-1 text-[9px]">
+                                <span>Lv 1 → 2: 10</span>
+                                <span>Lv 12 → 13: 4,000,000</span>
+                                <span>Lv 2 → 3: 40</span>
+                                <span>Lv 13 → 14: 7,000,000</span>
+                                <span>Lv 3 → 4: 200</span>
+                                <span>Lv 14 → 15: 15,000,000</span>
+                                <span>Lv 4 → 5: 750</span>
+                                <span>Lv 15 → 16: 120,000,000</span>
+                                <span>Lv 5 → 6: 4,000</span>
+                                <span>Lv 16 → 17: 450,000,000</span>
+                                <span>Lv 6 → 7: 15,000</span>
+                                <span>Lv 17 → 18: 1,900,000,000</span>
+                                <span>Lv 7 → 8: 60,000</span>
+                                <span>Lv 18 → 19: 7,500,000,000</span>
+                                <span>Lv 8 → 9: 270,000</span>
+                                <span>Lv 19 → 20: 15,000,000,000</span>
+                                <span>Lv 9 → 10: 450,000</span>
+                                <span>Lv 20 → 21: 475,000,000,000</span>
+                                <span>Lv 10 → 11: 1,200,000</span>
+                                <span>Lv 21 → 22: 4,500,000,000,000</span>
+                                <span>Lv 11 → 12: 2,000,000</span>
+                                <span>Lv 22 → 23: 95,000,000,000,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-white border-2 border-amber-100 rounded-2xl p-4 shadow-sm">
+                        <div class="text-sm text-amber-700 font-medium text-center">Honey Needed for Level Up</div>
+                        <div id="treatHoneyResult" class="text-3xl font-bold text-center text-amber-900">0</div>
+                        <div id="subtextCalculation" class="text-[10px] text-center text-amber-600 mt-2 opacity-70"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 text-center text-xs text-amber-600 italic">
+                Values are calculated based on provided game formulas.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Updated Bond Requirements based on User Input
+        const BOND_TABLE = {
+            1: 0,
+            2: 10,
+            3: 40,
+            4: 200,
+            5: 750,
+            6: 4000,
+            7: 15000,
+            8: 60000,
+            9: 270000,
+            10: 450000,
+            11: 1200000,
+            12: 2000000,
+            13: 4000000,
+            14: 7000000,
+            15: 15000000,
+            16: 120000000,
+            17: 450000000,
+            18: 1900000000,
+            19: 7500000000,
+            20: 15000000000,
+            21: 475000000000,
+            22: 4500000000000,
+            23: 95000000000000,
+            24: 900000000000000,
+            25: 9000000000000000
+        };
+
+        function switchTab(tab) {
+            const ticketSec = document.getElementById('section-tickets');
+            const treatSec = document.getElementById('section-treats');
+            const ticketTab = document.getElementById('tab-tickets');
+            const treatTab = document.getElementById('tab-treats');
+
+            if (tab === 'tickets') {
+                ticketSec.classList.remove('hidden');
+                treatSec.classList.add('hidden');
+                ticketTab.classList.add('tab-active');
+                treatTab.classList.remove('tab-active');
+            } else {
+                ticketSec.classList.add('hidden');
+                treatSec.classList.remove('hidden');
+                ticketTab.classList.remove('tab-active');
+                treatTab.classList.add('tab-active');
+            }
+        }
+
+        function formatVal(num) {
+            return Math.max(0, Math.floor(num)).toLocaleString();
+        }
+
+        const ownedInput = document.getElementById('owned');
+        const toBuyInput = document.getElementById('toBuy');
+        const nextPriceEl = document.getElementById('nextTicketPrice');
+        const totalCostEl = document.getElementById('totalCost');
+        const displayCountEl = document.getElementById('displayCount');
+
+        function calculateTicketPrice(n) {
+            if (n < 501) {
+                return 100000 + (1000 * Math.pow(n, 1.2));
+            } else {
+                return 100000 + (1000 * Math.pow(n, 1.7));
+            }
+        }
+
+        function updateTickets() {
+            const owned = parseInt(ownedInput.value) || 0;
+            const toBuy = parseInt(toBuyInput.value) || 0;
+            const nextPrice = calculateTicketPrice(owned);
+            nextPriceEl.innerText = formatVal(nextPrice) + " Honey";
+
+            let total = 0;
+            for (let i = 0; i < toBuy; i++) {
+                total += calculateTicketPrice(owned + i);
+            }
+            totalCostEl.innerText = formatVal(total) + " Honey";
+            displayCountEl.innerText = toBuy;
+        }
+
+        const targetLevelIn = document.getElementById('targetLevel');
+        const beeCountIn = document.getElementById('beeCount');
+        const outlierCountIn = document.getElementById('outlierCount');
+        const outlierLevelsInput = document.getElementById('outlierLevelsInput');
+        const labelOutlierCount = document.getElementById('labelOutlierCount');
+        const bondPerTreatIn = document.getElementById('bondPerTreat');
+        const inventoryIn = document.getElementById('inventoryTreats');
+        const treatHoneyResult = document.getElementById('treatHoneyResult');
+        const subtextCalc = document.getElementById('subtextCalculation');
+
+        function updateTreats() {
+            const targetLv = parseInt(targetLevelIn.value) || 1;
+            const totalBees = parseInt(beeCountIn.value) || 0;
+            const BT = parseFloat(bondPerTreatIn.value) || 10;
+            const INV = parseFloat(inventoryIn.value) || 0;
+
+            labelOutlierCount.innerText = `How many bees are NOT level ${targetLv - 1}?`;
+
+            const outliersCount = parseInt(outlierCountIn.value) || 0;
+            const outlierLevelsRaw = outlierLevelsInput.value.trim().split(/\s+/);
+            const outlierLevels = outlierLevelsRaw
+                .map(v => parseInt(v))
+                .filter(v => !isNaN(v))
+                .slice(0, outliersCount);
+
+            const validOutlierTotal = Math.min(outliersCount, totalBees);
+            const standardBeesCount = Math.max(0, totalBees - validOutlierTotal);
+
+            const standardBondReq = BOND_TABLE[targetLv] || 0;
+            let totalWeightedBond = standardBondReq * standardBeesCount;
+
+            let outlierBonds = 0;
+            for (let i = 0; i < validOutlierTotal; i++) {
+                const currentLv = outlierLevels[i] !== undefined ? outlierLevels[i] : (targetLv - 1);
+                let singleBeeBond = 0;
+                for (let lv = currentLv + 1; lv <= targetLv; lv++) {
+                    singleBeeBond += BOND_TABLE[lv] || 0;
+                }
+                outlierBonds += singleBeeBond;
+            }
+            
+            totalWeightedBond += outlierBonds;
+            
+            // CORRECT FORMULA: 1 Treat = 10,000 Honey.
+            // 1 Treat gives (BT) bond.
+            // Treats Needed = TotalBond / BT
+            // Honey Needed = Treats Needed * 10,000
+            const treatsNeeded = (totalWeightedBond / BT) - INV;
+            const result = treatsNeeded * 10000;
+
+            treatHoneyResult.innerText = formatVal(result) + " Honey";
+            
+            subtextCalc.innerText = `Total Bond: ${formatVal(totalWeightedBond)} | Treats needed: ${formatVal(treatsNeeded)}`;
+        }
+
+        [ownedInput, toBuyInput].forEach(el => el.addEventListener('input', updateTickets));
+        [targetLevelIn, beeCountIn, outlierCountIn, outlierLevelsInput, bondPerTreatIn, inventoryIn].forEach(el => el.addEventListener('input', updateTreats));
+
+        updateTickets();
+        updateTreats();
+    </script>
+</body>
+</html>
