@@ -83,7 +83,6 @@
                             <span>📸</span> Hive Scanner
                         </h2>
                         <div id="uploadArea" class="border-2 border-dashed border-blue-300 rounded-xl p-6 flex flex-col items-center justify-center bg-white hover:bg-blue-50 transition-all cursor-pointer">
-                            <!-- Added capture="environment" for iOS camera preference -->
                             <input type="file" id="imageInput" accept="image/*" capture="environment" class="hidden">
                             <p class="text-[10px] font-bold text-blue-500 uppercase">Tap to Take Photo or Upload</p>
                         </div>
@@ -127,7 +126,8 @@
     </div>
 
     <script>
-        const apiKey = "";
+        // API Key inserted below
+        const apiKey = "AIzaSyBcxZZZt4TLdGfkAbCya1OyIAqYhPcvaCs";
         let pendingImageData = null;
 
         // Tab Switching Logic
@@ -146,7 +146,6 @@
         const chatCameraBtn = document.getElementById('chatCameraBtn');
         const chatImageInput = document.getElementById('chatImageInput');
 
-        // iOS requires direct interaction to trigger file picker reliably
         uploadArea.addEventListener('click', () => imageInput.click());
         chatCameraBtn.addEventListener('click', () => chatImageInput.click());
 
@@ -178,10 +177,19 @@
         }
 
         // --- AI LOGIC ---
+        const bssSystemPrompt = `You are a Bee Swarm Simulator master expert (2026 Meta).
+        CORE KNOWLEDGE:
+        1. STAR EGG: Gift all Common->Epic first for guaranteed Mythic.
+        2. SSA: Blue Hive priority: Pop Star (Solo), Blue Pollen (70%+), Capacity (2.5x).
+        3. MUTATIONS: Buoyant (+Convert Amount), Tadpole (+BAR), Tabby (+Convert Amount %).
+        4. BEEQUIPS: Kazoo (Melody), Pinecones, Elf Caps (HAH waxed), Snow Tiara.
+        5. GEAR: Diamond Mask > Gummy for Blue.
+        BEHAVIOR: Give short, direct answers. If a picture is sent, provide ONLY the answer (no more, no less) as per user preference.`;
+
         async function sendToAI(prompt, base64Image = null) {
             const chatBody = {
-                contents: [{ role: "user", parts: [{ text: prompt }] }],
-                systemInstruction: { parts: [{ text: "BSS Master Expert. Give short, direct answers." }] }
+                contents: [{ role: "user", parts: [{ text: prompt || (base64Image ? "Analyze this image based on 2026 Blue Meta." : "") }] }],
+                systemInstruction: { parts: [{ text: bssSystemPrompt }] }
             };
             if (base64Image) {
                 chatBody.contents[0].parts.push({ inlineData: { mimeType: "image/png", data: base64Image } });
@@ -195,7 +203,7 @@
                 });
                 const data = await res.json();
                 return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response.";
-            } catch (e) { return "Connection Error."; }
+            } catch (e) { return "Connection Error. Check API Key."; }
         }
 
         const chatWindow = document.getElementById('chatWindow');
@@ -228,7 +236,7 @@
             chatInput.value = "";
             removeAttachment();
 
-            const response = await sendToAI(msg || "Analyze image", currentImgData);
+            const response = await sendToAI(msg, currentImgData);
             appendMessage('ai', response);
         };
 
@@ -237,7 +245,7 @@
             btn.innerText = "Scanning...";
             const scanImg = document.getElementById('imagePreview').src;
             appendMessage('user', "[Scanning Hive]", scanImg);
-            const response = await sendToAI("Analyze hive efficiency", scanImg.split(',')[1]);
+            const response = await sendToAI("Analyze this hive for 2026 Blue Meta efficiency.", scanImg.split(',')[1]);
             appendMessage('ai', response);
             btn.innerText = "Analyze My Hive";
         };
