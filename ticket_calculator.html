@@ -7,122 +7,56 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap');
-        
-        :root {
-            --bee-yellow: #fbbf24;
-            --bee-orange: #f59e0b;
-        }
-
-        body {
-            font-family: 'Lexend', sans-serif;
-            background-color: #fffbeb;
-            overscroll-behavior-y: contain;
-        }
-
-        .bee-gradient {
-            background: linear-gradient(135deg, var(--bee-yellow) 0%, var(--bee-orange) 100%);
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid #fef3c7;
-        }
-
-        input {
-            font-size: 16px !important;
-            min-height: 48px;
-        }
-
-        .tab-active {
-            border-bottom: 4px solid var(--bee-orange);
-            color: #92400e;
-            font-weight: 700;
-            background: white;
-        }
-
-        .custom-scroll::-webkit-scrollbar {
-            width: 4px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: var(--bee-orange);
-            border-radius: 10px;
-        }
-
-        .highlight-box {
-            background: linear-gradient(to right, #fff7ed, #ffedd5);
-            border: 2px solid #fdba74;
-        }
+        :root { --bee-yellow: #fbbf24; --bee-orange: #f59e0b; --blue-meta: #3b82f6; }
+        body { font-family: 'Lexend', sans-serif; background-color: #fffbeb; overscroll-behavior-y: contain; }
+        .bee-gradient { background: linear-gradient(135deg, var(--bee-yellow) 0%, var(--bee-orange) 100%); }
+        .card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid #fef3c7; }
+        input, textarea { font-size: 16px !important; min-height: 48px; }
+        .tab-active { border-bottom: 4px solid var(--bee-orange); color: #92400e; font-weight: 700; background: white; }
+        .chat-bubble-ai { background: #eff6ff; border-radius: 12px 12px 12px 2px; border: 1px solid #dbeafe; }
+        .chat-bubble-user { background: #fef3c7; border-radius: 12px 12px 2px 12px; border: 1px solid #fde68a; }
+        .image-attachment-preview { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 2px solid #3b82f6; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center">
 
     <div class="w-full max-w-xl flex-grow flex flex-col">
-        <!-- Sticky Header -->
         <div class="bee-gradient p-5 shadow-lg text-white text-center sticky top-0 z-50">
-            <h1 class="text-2xl font-bold flex items-center justify-center gap-2">
-                <span>🐝</span> BSS Multi-Calculator
-            </h1>
+            <h1 class="text-2xl font-bold flex items-center justify-center gap-2"><span>🐝</span> BSS Multi-Calculator</h1>
         </div>
 
-        <!-- Navigation Tabs -->
-        <div class="flex bg-amber-100/50 sticky top-[68px] z-40 border-b border-amber-200">
-            <button onclick="switchTab('tickets')" id="tab-tickets" class="flex-1 py-4 text-xs uppercase tracking-widest font-bold text-amber-700 transition-all tab-active">
-                Tickets
-            </button>
-            <button onclick="switchTab('treats')" id="tab-treats" class="flex-1 py-4 text-xs uppercase tracking-widest font-bold text-amber-700 transition-all">
-                Treats & Levels
-            </button>
+        <div class="flex bg-amber-100/50 sticky top-[68px] z-40 border-b border-amber-200 overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <button onclick="switchTab('tickets')" id="tab-tickets" class="flex-1 min-w-[100px] py-4 text-[10px] uppercase tracking-wider font-bold text-amber-700 transition-all tab-active">Tickets</button>
+            <button onclick="switchTab('treats')" id="tab-treats" class="flex-1 min-w-[100px] py-4 text-[10px] uppercase tracking-wider font-bold text-amber-700 transition-all">Treats</button>
+            <button onclick="switchTab('ai')" id="tab-ai" class="flex-1 min-w-[100px] py-4 text-[10px] uppercase tracking-wider font-bold text-amber-700 transition-all border-l border-amber-200/50">💎 Blue Hive AI</button>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="flex-grow p-4 md:p-6">
-            <div class="card rounded-2xl shadow-xl overflow-hidden">
+        <div class="flex-grow p-4 md:p-6 pb-20">
+            <div class="card rounded-2xl shadow-xl overflow-hidden mb-8">
                 
                 <!-- Ticket Section -->
                 <div id="section-tickets" class="p-5 space-y-6">
-                    
-                    <!-- NEW Quick Lookup Question -->
-                    <div class="highlight-box rounded-xl p-4 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 border-2 border-orange-200 shadow-sm">
                         <div class="flex items-center justify-between gap-4">
                             <div class="flex-1">
-                                <label class="block text-[11px] font-black text-orange-900 mb-2 uppercase tracking-tight">How much does 1 ticket cost in your shop right now?</label>
-                                <div class="relative">
-                                    <input type="number" id="quickCost" placeholder="e.g. 150000"
-                                        class="w-full px-4 py-2 rounded-lg border-2 border-orange-200 focus:border-orange-500 outline-none transition-all shadow-inner text-sm">
-                                    <div class="absolute right-3 top-3 text-orange-300 pointer-events-none">🍯</div>
-                                </div>
+                                <label class="block text-[11px] font-black text-orange-900 mb-2 uppercase tracking-tight">Shop Ticket Price?</label>
+                                <input type="number" id="quickCost" placeholder="e.g. 150000" class="w-full px-4 py-2 rounded-lg border-2 border-orange-200 focus:border-orange-500 outline-none transition-all text-sm">
                             </div>
-                            <div class="text-center px-4 py-2 bg-white rounded-lg border-2 border-orange-100 min-w-[100px]">
-                                <div class="text-[9px] font-bold text-orange-400 uppercase">You've Bought</div>
-                                <div id="calcBoughtCount" class="text-lg font-black text-orange-600">0</div>
-                                <div class="text-[8px] font-bold text-orange-400">TICKETS</div>
-                            </div>
+                            <div id="calcBoughtCount" class="text-lg font-black text-orange-600 px-4 py-2 bg-white rounded-lg border-2 border-orange-100 min-w-[110px] text-center">0</div>
                         </div>
                     </div>
-
-                    <div class="space-y-4 pt-2">
+                    <div class="space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 mb-2 uppercase">Already Owned (n)</label>
-                            <input type="number" id="owned" value="0" min="0" placeholder="0"
-                                class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none transition-all shadow-sm">
+                            <label class="block text-xs font-bold text-amber-900 mb-1 uppercase">Owned</label>
+                            <input type="number" id="owned" value="0" class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 mb-2 uppercase">Amount to Buy</label>
-                            <input type="number" id="toBuy" value="1" min="1"
-                                class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none transition-all shadow-sm">
+                            <label class="block text-xs font-bold text-amber-900 mb-1 uppercase">Amount to Buy</label>
+                            <input type="number" id="toBuy" value="1" class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none">
                         </div>
                     </div>
-
-                    <div class="space-y-3">
-                        <div class="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                            <div class="text-[10px] text-amber-700 font-bold uppercase mb-1">Cost of Next Ticket</div>
-                            <div id="nextTicketPrice" class="text-xl font-bold text-amber-900">100,000</div>
-                        </div>
-                        <div class="bee-gradient rounded-xl p-5 shadow-md text-white">
-                            <div class="text-[10px] font-bold uppercase opacity-90 mb-1">Total Cost for <span id="displayCount">1</span> Tickets</div>
-                            <div id="totalCost" class="text-2xl font-bold">100,000</div>
-                        </div>
+                    <div class="bee-gradient rounded-xl p-5 shadow-md text-white text-center">
+                        <div id="totalCost" class="text-xl font-bold">100,000 Honey</div>
                     </div>
                 </div>
 
@@ -131,186 +65,211 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-amber-900 mb-2 uppercase">Target Lvl</label>
-                            <input type="number" id="targetLevel" value="10" min="1"
-                                class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none shadow-sm">
+                            <input type="number" id="targetLevel" value="10" class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-amber-900 mb-2 uppercase">Bee Count</label>
-                            <input type="number" id="beeCount" value="50" min="1"
-                                class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none shadow-sm">
+                            <input type="number" id="beeCount" value="50" class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400">
                         </div>
                     </div>
-
-                    <div class="bg-amber-50/50 p-4 rounded-xl border border-dashed border-amber-200 space-y-4">
-                        <div>
-                            <label id="labelOutlierCount" class="block text-[10px] font-bold text-amber-800 mb-2 uppercase">Bees NOT at target level?</label>
-                            <input type="number" id="outlierCount" value="0" min="0"
-                                class="w-full px-3 py-2 text-sm rounded-lg border border-amber-200 focus:border-amber-400 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-amber-800 mb-2 uppercase">Levels (e.g. "8 5 7")</label>
-                            <input type="text" id="outlierLevelsInput" 
-                                class="w-full px-3 py-2 text-sm rounded-lg border border-amber-200 focus:border-amber-400 outline-none"
-                                placeholder="Separated by spaces">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-amber-900 mb-2 uppercase">Bond/Treat</label>
-                            <input type="number" id="bondPerTreat" value="10" min="1"
-                                class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none shadow-sm">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-amber-900 mb-2 uppercase">Inv. Treats</label>
-                            <input type="number" id="inventoryTreats" value="0" min="0"
-                                class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none shadow-sm">
-                        </div>
-                    </div>
-
-                    <div class="bg-white border-2 border-amber-100 rounded-xl p-5 shadow-sm text-center">
-                        <div class="text-[10px] text-amber-700 font-bold uppercase mb-1">Honey Needed</div>
-                        <div id="treatHoneyResult" class="text-2xl font-bold text-amber-900">0</div>
-                        <div id="subtextCalculation" class="text-[9px] text-amber-500 mt-2 font-medium"></div>
-                    </div>
-
-                    <details class="bg-amber-50 rounded-xl border border-amber-100">
-                        <summary class="p-3 text-xs font-bold text-amber-800 cursor-pointer uppercase text-center">View Bond Table</summary>
-                        <div class="p-3 grid grid-cols-2 gap-2 text-[10px] border-t border-amber-100 custom-scroll overflow-y-auto max-h-40">
-                            <div id="js-bond-list" class="col-span-2 grid grid-cols-2 gap-x-4"></div>
-                        </div>
-                    </details>
+                    <div id="treatHoneyResult" class="bg-white border-2 border-amber-100 rounded-xl p-5 text-center text-2xl font-bold text-amber-900">0</div>
                 </div>
 
-                <div class="p-4 text-center text-[10px] text-amber-400 uppercase tracking-widest font-bold bg-white border-t border-amber-50">
-                    BSS Calculator v2.1
+                <!-- AI Hive Improver Section -->
+                <div id="section-ai" class="hidden p-5 space-y-6">
+                    <!-- Scanner Tool -->
+                    <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+                        <h2 class="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
+                            <span>📸</span> Hive Scanner
+                        </h2>
+                        <div id="uploadArea" class="border-2 border-dashed border-blue-300 rounded-xl p-6 flex flex-col items-center justify-center bg-white hover:bg-blue-50 transition-all cursor-pointer">
+                            <!-- Added capture="environment" for iOS camera preference -->
+                            <input type="file" id="imageInput" accept="image/*" capture="environment" class="hidden">
+                            <p class="text-[10px] font-bold text-blue-500 uppercase">Tap to Take Photo or Upload</p>
+                        </div>
+                        <div id="imagePreviewContainer" class="hidden mt-4 space-y-3">
+                            <img id="imagePreview" class="w-full rounded-lg h-32 object-cover border-2 border-blue-400">
+                            <button id="analyzeBtn" class="w-full bg-blue-600 py-3 rounded-xl text-white font-bold text-xs uppercase shadow-md active:scale-95 transition-all">
+                                Analyze My Hive
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Expert Chat Bot -->
+                    <div class="space-y-3">
+                        <div id="chatWindow" class="bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 h-64 overflow-y-auto space-y-4 flex flex-col">
+                            <div class="chat-bubble-ai p-3 text-xs text-blue-800 self-start max-w-[85%]">
+                                Hello! I'm your BSS mentor. Tap the camera to send me your Amulets or Hive!
+                            </div>
+                        </div>
+
+                        <div class="bg-white border-2 border-slate-100 rounded-2xl p-2 shadow-sm">
+                            <div id="attachmentPreview" class="hidden flex items-center gap-2 p-2 mb-2 bg-blue-50 rounded-xl">
+                                <img id="attachedImageImg" class="image-attachment-preview">
+                                <button onclick="removeAttachment()" class="text-red-400 p-1">✕</button>
+                            </div>
+                            <div class="flex items-end gap-2">
+                                <button id="chatCameraBtn" class="p-3 text-blue-400 hover:bg-blue-50 rounded-xl transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                </button>
+                                <input type="file" id="chatImageInput" accept="image/*" capture="environment" class="hidden">
+                                <textarea id="chatInput" placeholder="Ask a question..." class="flex-grow p-2 text-sm outline-none bg-transparent min-h-[44px] max-h-32 resize-none"></textarea>
+                                <button id="sendMsgBtn" class="p-3 text-blue-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
 
     <script>
-        const BOND_TABLE = {
-            1: 0, 2: 10, 3: 40, 4: 200, 5: 750, 6: 4000, 7: 15000, 8: 60000, 9: 270000, 
-            10: 450000, 11: 1200000, 12: 2000000, 13: 4000000, 14: 7000000, 15: 15000000, 
-            16: 120000000, 17: 450000000, 18: 1900000000, 19: 7500000000, 20: 15000000000, 
-            21: 475000000000, 22: 4500000000000, 23: 95000000000000, 24: 900000000000000, 25: 9000000000000000
+        const apiKey = "";
+        let pendingImageData = null;
+
+        // Tab Switching Logic
+        function switchTab(tab) {
+            ['tickets', 'treats', 'ai'].forEach(t => {
+                document.getElementById(`section-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).classList.remove('tab-active');
+            });
+            document.getElementById(`section-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.add('tab-active');
+        }
+
+        // --- CAMERA & FILE HANDLING FIXES FOR IOS ---
+        const uploadArea = document.getElementById('uploadArea');
+        const imageInput = document.getElementById('imageInput');
+        const chatCameraBtn = document.getElementById('chatCameraBtn');
+        const chatImageInput = document.getElementById('chatImageInput');
+
+        // iOS requires direct interaction to trigger file picker reliably
+        uploadArea.addEventListener('click', () => imageInput.click());
+        chatCameraBtn.addEventListener('click', () => chatImageInput.click());
+
+        function handleImageUpload(input, previewImg, container) {
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (re) => {
+                    if (previewImg) previewImg.src = re.target.result;
+                    if (container) container.classList.remove('hidden');
+                    if (input === chatImageInput) {
+                        pendingImageData = re.target.result.split(',')[1];
+                        document.getElementById('attachedImageImg').src = re.target.result;
+                        document.getElementById('attachmentPreview').classList.remove('hidden');
+                    }
+                };
+                reader.readAsDataURL(file);
+            };
+        }
+
+        handleImageUpload(imageInput, document.getElementById('imagePreview'), document.getElementById('imagePreviewContainer'));
+        handleImageUpload(chatImageInput, null, null);
+
+        function removeAttachment() {
+            pendingImageData = null;
+            document.getElementById('attachmentPreview').classList.add('hidden');
+            chatImageInput.value = "";
+        }
+
+        // --- AI LOGIC ---
+        async function sendToAI(prompt, base64Image = null) {
+            const chatBody = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: "BSS Master Expert. Give short, direct answers." }] }
+            };
+            if (base64Image) {
+                chatBody.contents[0].parts.push({ inlineData: { mimeType: "image/png", data: base64Image } });
+            }
+
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(chatBody)
+                });
+                const data = await res.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response.";
+            } catch (e) { return "Connection Error."; }
+        }
+
+        const chatWindow = document.getElementById('chatWindow');
+        const chatInput = document.getElementById('chatInput');
+
+        function appendMessage(role, text, imageSrc = null) {
+            const div = document.createElement('div');
+            div.className = role === 'ai' ? 'chat-bubble-ai p-3 text-xs text-blue-800 self-start max-w-[85%]' : 'chat-bubble-user p-3 text-xs text-amber-900 self-end max-w-[85%]';
+            if (imageSrc) {
+                const img = document.createElement('img');
+                img.src = imageSrc;
+                img.className = "w-full rounded mb-2 border border-amber-200";
+                div.appendChild(img);
+            }
+            const span = document.createElement('span');
+            span.innerText = text;
+            div.appendChild(span);
+            chatWindow.appendChild(div);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        document.getElementById('sendMsgBtn').onclick = async () => {
+            const msg = chatInput.value.trim();
+            const currentImgData = pendingImageData;
+            const currentImgSrc = currentImgData ? document.getElementById('attachedImageImg').src : null;
+            
+            if (!msg && !currentImgData) return;
+
+            appendMessage('user', msg || "[Image]", currentImgSrc);
+            chatInput.value = "";
+            removeAttachment();
+
+            const response = await sendToAI(msg || "Analyze image", currentImgData);
+            appendMessage('ai', response);
         };
 
-        const bondListDiv = document.getElementById('js-bond-list');
-        Object.keys(BOND_TABLE).forEach(lv => {
-            if (lv == 1) return;
-            const item = document.createElement('div');
-            item.className = "flex justify-between border-b border-amber-100 py-1";
-            item.innerHTML = `<span>Lvl ${lv-1}→${lv}:</span> <span class="font-bold">${BOND_TABLE[lv].toLocaleString()}</span>`;
-            bondListDiv.appendChild(item);
-        });
+        document.getElementById('analyzeBtn').onclick = async () => {
+            const btn = document.getElementById('analyzeBtn');
+            btn.innerText = "Scanning...";
+            const scanImg = document.getElementById('imagePreview').src;
+            appendMessage('user', "[Scanning Hive]", scanImg);
+            const response = await sendToAI("Analyze hive efficiency", scanImg.split(',')[1]);
+            appendMessage('ai', response);
+            btn.innerText = "Analyze My Hive";
+        };
 
-        function switchTab(tab) {
-            document.getElementById('section-tickets').classList.toggle('hidden', tab !== 'tickets');
-            document.getElementById('section-treats').classList.toggle('hidden', tab !== 'treats');
-            document.getElementById('tab-tickets').classList.toggle('tab-active', tab === 'tickets');
-            document.getElementById('tab-treats').classList.toggle('tab-active', tab === 'treats');
-            window.scrollTo(0,0);
-        }
-
-        function formatVal(num) {
-            if (num >= 1e12) return (num / 1e12).toFixed(2) + "T";
-            if (num >= 1e9) return (num / 1e9).toFixed(2) + "B";
-            if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
-            return Math.max(0, Math.floor(num)).toLocaleString();
-        }
-
-        // TICKET REVERSE LOGIC
+        // --- TICKET CALCULATOR ---
         const quickCostIn = document.getElementById('quickCost');
         const calcBoughtEl = document.getElementById('calcBoughtCount');
         const ownedInput = document.getElementById('owned');
+        const toBuyInput = document.getElementById('toBuy');
 
-        function reverseTicketPrice() {
-            const currentPrice = parseFloat(quickCostIn.value) || 0;
-            if (currentPrice < 100000) {
-                calcBoughtEl.innerText = "0";
-                return;
-            }
-
-            const x = (currentPrice - 100000) / 1000;
-            let n = 0;
-            
-            // Try formula for n < 501 first
-            const nSmall = Math.round(Math.pow(x, 1 / 1.2));
-            // Try formula for n >= 501
-            const nLarge = Math.round(Math.pow(x, 1 / 1.7));
-
-            if (nSmall <= 500) {
-                n = nSmall;
-            } else {
-                n = nLarge;
-            }
-
-            calcBoughtEl.innerText = n.toLocaleString();
-            ownedInput.value = n; // Sync with Already Owned
+        quickCostIn.oninput = () => {
+            const p = parseFloat(quickCostIn.value) || 0;
+            if (p < 100000) return;
+            const x = (p - 100000) / 1000;
+            const n = Math.round(p < 500000 ? Math.pow(x, 1/1.2) : Math.pow(x, 1/1.7));
+            calcBoughtEl.innerText = n;
+            ownedInput.value = n;
             updateTickets();
-        }
-
-        function calculateTicketPrice(n) {
-            return n < 501 ? 100000 + (1000 * Math.pow(n, 1.2)) : 100000 + (1000 * Math.pow(n, 1.7));
-        }
+        };
 
         function updateTickets() {
-            const owned = parseInt(ownedInput.value) || 0;
-            const toBuy = parseInt(document.getElementById('toBuy').value) || 0;
-            const nextPrice = calculateTicketPrice(owned);
-            document.getElementById('nextTicketPrice').innerText = formatVal(nextPrice) + " Honey";
-
-            let total = 0;
-            for (let i = 0; i < toBuy; i++) total += calculateTicketPrice(owned + i);
-            document.getElementById('totalCost').innerText = formatVal(total) + " Honey";
-            document.getElementById('displayCount').innerText = toBuy;
-        }
-
-        // TREAT LOGIC
-        function updateTreats() {
-            const targetLv = parseInt(document.getElementById('targetLevel').value) || 1;
-            const totalBees = parseInt(document.getElementById('beeCount').value) || 0;
-            const BT = parseFloat(document.getElementById('bondPerTreat').value) || 10;
-            const INV = parseFloat(document.getElementById('inventoryTreats').value) || 0;
-
-            document.getElementById('labelOutlierCount').innerText = `Bees NOT at level ${targetLv - 1}?`;
-
-            const outliersCount = parseInt(document.getElementById('outlierCount').value) || 0;
-            const outlierLevels = document.getElementById('outlierLevelsInput').value.trim().split(/\s+/)
-                .map(v => parseInt(v)).filter(v => !isNaN(v)).slice(0, outliersCount);
-
-            const validOutlierTotal = Math.min(outliersCount, totalBees);
-            const standardBeesCount = Math.max(0, totalBees - validOutlierTotal);
-
-            let totalWeightedBond = (BOND_TABLE[targetLv] || 0) * standardBeesCount;
-
-            for (let i = 0; i < validOutlierTotal; i++) {
-                const currentLv = outlierLevels[i] !== undefined ? outlierLevels[i] : (targetLv - 1);
-                for (let lv = currentLv + 1; lv <= targetLv; lv++) {
-                    totalWeightedBond += BOND_TABLE[lv] || 0;
-                }
+            const o = parseInt(ownedInput.value) || 0;
+            const b = parseInt(toBuyInput.value) || 0;
+            let t = 0;
+            for (let i = 0; i < b; i++) {
+                let n = o + i;
+                t += n < 501 ? 100000 + (1000 * Math.pow(n, 1.2)) : 100000 + (1000 * Math.pow(n, 1.7));
             }
-            
-            const treatsNeeded = (totalWeightedBond / BT) - INV;
-            const result = treatsNeeded * 10000;
-
-            document.getElementById('treatHoneyResult').innerText = formatVal(result) + " Honey";
-            document.getElementById('subtextCalculation').innerText = `Total Bond: ${formatVal(totalWeightedBond)} | Treats: ${formatVal(treatsNeeded)}`;
+            document.getElementById('totalCost').innerText = Math.floor(t).toLocaleString() + " Honey";
         }
-
-        // Listeners
-        quickCostIn.addEventListener('input', reverseTicketPrice);
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', () => {
-                if(input.id !== 'quickCost') updateTickets();
-                updateTreats();
-            });
-        });
-
-        updateTickets();
-        updateTreats();
+        ownedInput.oninput = updateTickets;
+        toBuyInput.oninput = updateTickets;
     </script>
 </body>
 </html>
