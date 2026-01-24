@@ -28,7 +28,7 @@
         <div class="flex bg-amber-100/50 sticky top-[68px] z-40 border-b border-amber-200 overflow-x-auto whitespace-nowrap scrollbar-hide">
             <button onclick="switchTab('tickets')" id="tab-tickets" class="flex-1 min-w-[100px] py-4 text-[10px] uppercase tracking-wider font-bold text-amber-700 transition-all tab-active">Tickets</button>
             <button onclick="switchTab('treats')" id="tab-treats" class="flex-1 min-w-[100px] py-4 text-[10px] uppercase tracking-wider font-bold text-amber-700 transition-all">Treats</button>
-            <button onclick="switchTab('ai')" id="tab-ai" class="flex-1 min-w-[100px] py-4 text-[10px] uppercase tracking-wider font-bold text-amber-700 transition-all border-l border-amber-200/50">💎 Blue Hive AI</button>
+            <button onclick="switchTab('ai')" id="tab-ai" class="flex-1 min-w-[100px] py-4 text-[10px] uppercase tracking-wider font-bold text-amber-700 transition-all border-l border-amber-200/50">💎 Hive Expert AI</button>
         </div>
 
         <div class="flex-grow p-4 md:p-6 pb-20">
@@ -68,7 +68,7 @@
                             <input type="number" id="targetLevel" value="10" class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 mb-2 uppercase">Bee Count</label>
+                            <label class="block text-xs font-bold text-amber-900 mb-1 uppercase">Bee Count</label>
                             <input type="number" id="beeCount" value="50" class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400">
                         </div>
                     </div>
@@ -77,28 +77,26 @@
 
                 <!-- AI Hive Improver Section -->
                 <div id="section-ai" class="hidden p-5 space-y-6">
-                    <!-- Scanner Tool -->
                     <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4">
                         <h2 class="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
-                            <span>📸</span> Hive Scanner
+                            <span>📸</span> Smart Scanner
                         </h2>
                         <div id="uploadArea" class="border-2 border-dashed border-blue-300 rounded-xl p-6 flex flex-col items-center justify-center bg-white hover:bg-blue-50 transition-all cursor-pointer">
                             <input type="file" id="imageInput" accept="image/*" capture="environment" class="hidden">
-                            <p class="text-[10px] font-bold text-blue-500 uppercase">Tap to Take Photo or Upload</p>
+                            <p class="text-[10px] font-bold text-blue-500 uppercase">Scan Hive or Amulet</p>
                         </div>
                         <div id="imagePreviewContainer" class="hidden mt-4 space-y-3">
                             <img id="imagePreview" class="w-full rounded-lg h-32 object-cover border-2 border-blue-400">
                             <button id="analyzeBtn" class="w-full bg-blue-600 py-3 rounded-xl text-white font-bold text-xs uppercase shadow-md active:scale-95 transition-all">
-                                Analyze My Hive
+                                Analyze Progress
                             </button>
                         </div>
                     </div>
 
-                    <!-- Expert Chat Bot -->
                     <div class="space-y-3">
                         <div id="chatWindow" class="bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 h-64 overflow-y-auto space-y-4 flex flex-col">
                             <div class="chat-bubble-ai p-3 text-xs text-blue-800 self-start max-w-[85%]">
-                                Hello! I'm your BSS mentor. Tap the camera to send me your Amulets or Hive!
+                                Hello! I'm your BSS guide. 🐝<br><br><b>Pro Tip:</b> Everything before SSA is <b>Early Game</b>. Stay <b>Mixed</b> until you get that Supreme Star Amulet!
                             </div>
                         </div>
 
@@ -112,7 +110,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                 </button>
                                 <input type="file" id="chatImageInput" accept="image/*" capture="environment" class="hidden">
-                                <textarea id="chatInput" placeholder="Ask a question..." class="flex-grow p-2 text-sm outline-none bg-transparent min-h-[44px] max-h-32 resize-none"></textarea>
+                                <textarea id="chatInput" placeholder="Ask about early or mid game..." class="flex-grow p-2 text-sm outline-none bg-transparent min-h-[44px] max-h-32 resize-none"></textarea>
                                 <button id="sendMsgBtn" class="p-3 text-blue-600">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                                 </button>
@@ -126,11 +124,9 @@
     </div>
 
     <script>
-        // API Key inserted below
         const apiKey = "AIzaSyBcxZZZt4TLdGfkAbCya1OyIAqYhPcvaCs";
         let pendingImageData = null;
 
-        // Tab Switching Logic
         function switchTab(tab) {
             ['tickets', 'treats', 'ai'].forEach(t => {
                 document.getElementById(`section-${t}`).classList.add('hidden');
@@ -140,7 +136,6 @@
             document.getElementById(`tab-${tab}`).classList.add('tab-active');
         }
 
-        // --- CAMERA & FILE HANDLING FIXES FOR IOS ---
         const uploadArea = document.getElementById('uploadArea');
         const imageInput = document.getElementById('imageInput');
         const chatCameraBtn = document.getElementById('chatCameraBtn');
@@ -176,19 +171,24 @@
             chatImageInput.value = "";
         }
 
-        // --- AI LOGIC ---
-        const bssSystemPrompt = `You are a Bee Swarm Simulator master expert (2026 Meta).
-        CORE KNOWLEDGE:
-        1. STAR EGG: Gift all Common->Epic first for guaranteed Mythic.
-        2. SSA: Blue Hive priority: Pop Star (Solo), Blue Pollen (70%+), Capacity (2.5x).
-        3. MUTATIONS: Buoyant (+Convert Amount), Tadpole (+BAR), Tabby (+Convert Amount %).
-        4. BEEQUIPS: Kazoo (Melody), Pinecones, Elf Caps (HAH waxed), Snow Tiara.
-        5. GEAR: Diamond Mask > Gummy for Blue.
-        BEHAVIOR: Give short, direct answers. If a picture is sent, provide ONLY the answer (no more, no less) as per user preference.`;
+        const bssSystemPrompt = `You are a friendly, concise Bee Swarm Simulator Master.
+        
+        PHASE DEFINITIONS:
+        1. EARLY GAME: Any player without a Supreme Star Amulet (SSA). This includes late-early game players with Petal Wands/Belts.
+        2. MID GAME: Starts ONLY once the user has an SSA.
+        
+        CORE RULES:
+        - If EARLY GAME: Strictly advise staying MIXED. Explain that choosing a color before SSA makes quest completion (like Spirit Bear) extremely slow and difficult.
+        - If MID GAME (SSA owned): Advise switching to Blue Hive as the cheapest and most efficient first-color meta. Focus on Solo Pop Star.
+        
+        FORMAT:
+        - Keep responses balanced: detailed but punchy.
+        - Structure: "Overview", "Key Takeaways", "Final Verdict".
+        - Use emojis 🐝🍯✨.`;
 
         async function sendToAI(prompt, base64Image = null) {
             const chatBody = {
-                contents: [{ role: "user", parts: [{ text: prompt || (base64Image ? "Analyze this image based on 2026 Blue Meta." : "") }] }],
+                contents: [{ role: "user", parts: [{ text: prompt || (base64Image ? "Please analyze this BSS screenshot. Determine if I am still in Early Game (Pre-SSA) or ready for Mid Game (SSA)." : "") }] }],
                 systemInstruction: { parts: [{ text: bssSystemPrompt }] }
             };
             if (base64Image) {
@@ -202,8 +202,8 @@
                     body: JSON.stringify(chatBody)
                 });
                 const data = await res.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response.";
-            } catch (e) { return "Connection Error. Check API Key."; }
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Buzz... no response. Try again! 🐝";
+            } catch (e) { return "Connection Error. 🐝"; }
         }
 
         const chatWindow = document.getElementById('chatWindow');
@@ -218,8 +218,8 @@
                 img.className = "w-full rounded mb-2 border border-amber-200";
                 div.appendChild(img);
             }
-            const span = document.createElement('span');
-            span.innerText = text;
+            const span = document.createElement('div');
+            span.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
             div.appendChild(span);
             chatWindow.appendChild(div);
             chatWindow.scrollTop = chatWindow.scrollHeight;
@@ -232,7 +232,7 @@
             
             if (!msg && !currentImgData) return;
 
-            appendMessage('user', msg || "[Image]", currentImgSrc);
+            appendMessage('user', msg || "[Image Attached]");
             chatInput.value = "";
             removeAttachment();
 
@@ -242,15 +242,15 @@
 
         document.getElementById('analyzeBtn').onclick = async () => {
             const btn = document.getElementById('analyzeBtn');
-            btn.innerText = "Scanning...";
+            btn.innerText = "Analyzing...";
             const scanImg = document.getElementById('imagePreview').src;
-            appendMessage('user', "[Scanning Hive]", scanImg);
-            const response = await sendToAI("Analyze this hive for 2026 Blue Meta efficiency.", scanImg.split(',')[1]);
+            appendMessage('user', "Expert Scan Request 📸");
+            const response = await sendToAI("Check my progress. Based on my gear and hive, am I still early game or ready for Mid-Game (SSA)?", scanImg.split(',')[1]);
             appendMessage('ai', response);
-            btn.innerText = "Analyze My Hive";
+            btn.innerText = "Analyze Progress";
         };
 
-        // --- TICKET CALCULATOR ---
+        // Ticket Logic
         const quickCostIn = document.getElementById('quickCost');
         const calcBoughtEl = document.getElementById('calcBoughtCount');
         const ownedInput = document.getElementById('owned');
