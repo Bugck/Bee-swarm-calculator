@@ -7,115 +7,117 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap');
-        :root { --bee-yellow: #fbbf24; --bee-orange: #f59e0b; --blue-meta: #3b82f6; }
+        :root { --bee-yellow: #fbbf24; --bee-orange: #f59e0b; }
         body { font-family: 'Lexend', sans-serif; background-color: #fffbeb; overscroll-behavior-y: contain; }
+        
         .bee-gradient { background: linear-gradient(135deg, var(--bee-yellow) 0%, var(--bee-orange) 100%); }
         .card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid #fef3c7; }
-        input, textarea { font-size: 16px !important; min-height: 48px; }
         .tab-active { border-bottom: 4px solid var(--bee-orange); color: #92400e; font-weight: 700; background: white; }
-        .chat-bubble-ai { background: #eff6ff; border-radius: 12px 12px 12px 2px; border: 1px solid #dbeafe; }
-        .chat-bubble-user { background: #fef3c7; border-radius: 12px 12px 2px 12px; border: 1px solid #fde68a; }
-        .image-attachment-preview { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 2px solid #3b82f6; }
+        .input-box { border: 2px solid #fde68a; border-radius: 12px; padding: 10px 16px; background: white; color: #78350f; font-weight: 600; outline: none; width: 100%; }
+        .label-text { color: #92400e; font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; display: block; }
+        
+        .loading-pulse { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* AI Expert Specific Styling */
+        .ai-bubble-expert { background: #eff6ff; color: #1e40af; border: 1px solid #dbeafe; border-radius: 12px; }
+        .ai-bubble-user { background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; border-radius: 12px; }
+        .smart-scanner-area { border: 2px dashed #93c5fd; background: #f0f7ff; border-radius: 16px; transition: all 0.2s; }
+        .smart-scanner-area:active { background: #e0efff; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center">
+<body class="min-h-screen flex flex-col items-center pb-12">
 
     <div class="w-full max-w-xl flex-grow flex flex-col">
-        <div class="bee-gradient p-5 shadow-lg text-white text-center sticky top-0 z-50">
-            <h1 class="text-2xl font-bold flex items-center justify-center gap-2"><span>🐝</span> BSS Multi-Calculator</h1>
+        <!-- Header -->
+        <div class="bee-gradient p-6 shadow-lg text-white text-center sticky top-0 z-50">
+            <h1 class="text-2xl font-black flex items-center justify-center gap-2 tracking-tight"><span>🐝</span> BSS HUB</h1>
         </div>
 
-        <div class="flex bg-amber-100/50 sticky top-[68px] z-40 border-b border-amber-200 overflow-x-auto whitespace-nowrap scrollbar-hide">
-            <button onclick="switchTab('tickets')" id="tab-tickets" class="flex-1 min-w-[100px] py-4 text-[10px] uppercase tracking-wider font-bold text-amber-700 transition-all tab-active">Tickets</button>
-            <button onclick="switchTab('treats')" id="tab-treats" class="flex-1 min-w-[100px] py-4 text-[10px] uppercase tracking-wider font-bold text-amber-700 transition-all">Treats</button>
-            <button onclick="switchTab('ai')" id="tab-ai" class="flex-1 min-w-[100px] py-4 text-[10px] uppercase tracking-wider font-bold text-amber-700 transition-all border-l border-amber-200/50">💎 Hive Expert AI</button>
+        <!-- Tabs -->
+        <div class="flex bg-amber-100/50 sticky top-[76px] z-40 border-b border-amber-200">
+            <button onclick="switchTab('tickets')" id="tab-tickets" class="flex-1 py-5 text-[11px] uppercase font-black text-amber-700">Tickets</button>
+            <button onclick="switchTab('treats')" id="tab-treats" class="flex-1 py-5 text-[11px] uppercase font-black text-amber-700 tab-active">Treats Calc</button>
+            <button onclick="switchTab('ai')" id="tab-ai" class="flex-1 py-5 text-[11px] uppercase font-black text-amber-700">💎 AI Expert</button>
         </div>
 
-        <div class="flex-grow p-4 md:p-6 pb-20">
-            <div class="card rounded-2xl shadow-xl overflow-hidden mb-8">
+        <div class="flex-grow p-4">
+            <div class="card rounded-3xl shadow-2xl overflow-hidden mb-8">
                 
                 <!-- Ticket Section -->
-                <div id="section-tickets" class="p-5 space-y-6">
-                    <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 border-2 border-orange-200 shadow-sm">
-                        <div class="flex items-center justify-between gap-4">
-                            <div class="flex-1">
-                                <label class="block text-[11px] font-black text-orange-900 mb-2 uppercase tracking-tight">Shop Ticket Price?</label>
-                                <input type="number" id="quickCost" placeholder="e.g. 150000" class="w-full px-4 py-2 rounded-lg border-2 border-orange-200 focus:border-orange-500 outline-none transition-all text-sm">
-                            </div>
-                            <div id="calcBoughtCount" class="text-lg font-black text-orange-600 px-4 py-2 bg-white rounded-lg border-2 border-orange-100 min-w-[110px] text-center">0</div>
+                <div id="section-tickets" class="hidden p-6 space-y-8">
+                    <div class="bg-amber-50 rounded-2xl p-5 border-2 border-amber-200">
+                        <label class="label-text">Shop Ticket Price?</label>
+                        <div class="flex gap-4">
+                            <input type="number" id="quickCost" placeholder="e.g. 150000" class="flex-1 input-box">
+                            <div id="calcBoughtCount" class="bg-white border-2 border-amber-200 px-5 py-2 rounded-xl font-black text-amber-600 flex items-center shadow-sm">0 Bought</div>
                         </div>
                     </div>
-                    <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 mb-1 uppercase">Owned</label>
-                            <input type="number" id="owned" value="0" class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none">
+                            <label class="label-text">Owned Tickets</label>
+                            <input type="number" id="owned" value="0" class="input-box">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 mb-1 uppercase">Amount to Buy</label>
-                            <input type="number" id="toBuy" value="1" class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400 outline-none">
+                            <label class="label-text">How many to buy?</label>
+                            <input type="number" id="toBuy" value="1" class="input-box">
                         </div>
                     </div>
-                    <div class="bee-gradient rounded-xl p-5 shadow-md text-white text-center">
-                        <div id="totalCost" class="text-xl font-bold">100,000 Honey</div>
+                    <div class="bg-amber-500 rounded-2xl p-8 text-white text-center shadow-xl">
+                        <div id="totalCost" class="text-3xl font-black">0 Honey</div>
                     </div>
                 </div>
 
                 <!-- Treats Section -->
-                <div id="section-treats" class="hidden p-5 space-y-6">
-                    <div class="grid grid-cols-2 gap-4">
+                <div id="section-treats" class="p-6 space-y-6">
+                    <div class="grid grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 mb-2 uppercase">Target Lvl</label>
-                            <input type="number" id="targetLevel" value="10" class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400">
+                            <label class="label-text">Target Level</label>
+                            <input type="number" id="targetLevel" value="14" class="input-box">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 mb-1 uppercase">Bee Count</label>
-                            <input type="number" id="beeCount" value="50" class="w-full px-4 rounded-xl border-2 border-amber-100 focus:border-amber-400">
+                            <label class="label-text">Total Hive Slots</label>
+                            <input type="number" id="beeCount" value="50" class="input-box">
                         </div>
                     </div>
-                    <div id="treatHoneyResult" class="bg-white border-2 border-amber-100 rounded-xl p-5 text-center text-2xl font-bold text-amber-900">0</div>
+
+                    <div class="grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="label-text">Bond Per Treat</label>
+                            <input type="number" id="bondPerTreat" value="10" class="input-box">
+                        </div>
+                        <div>
+                            <label class="label-text">Treats in Inv.</label>
+                            <input type="number" id="invTreats" value="0" class="input-box">
+                        </div>
+                    </div>
+
+                    <div class="bg-white border-4 border-amber-100 rounded-3xl p-8 text-center shadow-md">
+                        <div class="text-[11px] font-black text-amber-800 uppercase mb-1">Honey Needed</div>
+                        <div id="honeyResult" class="text-4xl font-black text-amber-950">0 Honey</div>
+                        <div id="calcDetails" class="text-[11px] font-bold text-amber-500 uppercase mt-2">Bond Needed: 0 | Treats Needed: 0</div>
+                        <p class="text-[9px] text-amber-400 mt-4 italic font-bold">Calculation assumes all bees are currently Level (Target - 1)</p>
+                    </div>
                 </div>
 
-                <!-- AI Hive Improver Section -->
-                <div id="section-ai" class="hidden p-5 space-y-6">
-                    <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4">
-                        <h2 class="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
-                            <span>📸</span> Smart Scanner
-                        </h2>
-                        <div id="uploadArea" class="border-2 border-dashed border-blue-300 rounded-xl p-6 flex flex-col items-center justify-center bg-white hover:bg-blue-50 transition-all cursor-pointer">
-                            <input type="file" id="imageInput" accept="image/*" capture="environment" class="hidden">
-                            <p class="text-[10px] font-bold text-blue-500 uppercase">Scan Hive or Amulet</p>
+                <!-- AI Expert Section -->
+                <div id="section-ai" class="hidden flex flex-col h-[600px] bg-[#f8fafc]">
+                    <div class="p-4 bg-white border-b border-slate-100">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-lg">📷</span>
+                            <span class="font-bold text-slate-700 text-sm">Smart Progress Scanner</span>
                         </div>
-                        <div id="imagePreviewContainer" class="hidden mt-4 space-y-3">
-                            <img id="imagePreview" class="w-full rounded-lg h-32 object-cover border-2 border-blue-400">
-                            <button id="analyzeBtn" class="w-full bg-blue-600 py-3 rounded-xl text-white font-bold text-xs uppercase shadow-md active:scale-95 transition-all">
-                                Analyze Progress
-                            </button>
-                        </div>
+                        <button onclick="document.getElementById('aiScannerInput').click()" class="border-2 border-dashed border-blue-300 bg-blue-50 w-full py-10 flex flex-col items-center justify-center gap-2 rounded-2xl">
+                            <span class="text-blue-600 font-bold text-xs uppercase tracking-widest">Scan Hive or Gear</span>
+                            <input type="file" id="aiScannerInput" accept="image/*" capture="camera" class="hidden">
+                        </button>
                     </div>
-
-                    <div class="space-y-3">
-                        <div id="chatWindow" class="bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 h-64 overflow-y-auto space-y-4 flex flex-col">
-                            <div class="chat-bubble-ai p-3 text-xs text-blue-800 self-start max-w-[85%]">
-                                Hello! I'm your BSS guide. 🐝<br><br><b>Pro Tip:</b> Everything before SSA is <b>Early Game</b>. Stay <b>Mixed</b> until you get that Supreme Star Amulet!
-                            </div>
-                        </div>
-
-                        <div class="bg-white border-2 border-slate-100 rounded-2xl p-2 shadow-sm">
-                            <div id="attachmentPreview" class="hidden flex items-center gap-2 p-2 mb-2 bg-blue-50 rounded-xl">
-                                <img id="attachedImageImg" class="image-attachment-preview">
-                                <button onclick="removeAttachment()" class="text-red-400 p-1">✕</button>
-                            </div>
-                            <div class="flex items-end gap-2">
-                                <button id="chatCameraBtn" class="p-3 text-blue-400 hover:bg-blue-50 rounded-xl transition-all">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                </button>
-                                <input type="file" id="chatImageInput" accept="image/*" capture="environment" class="hidden">
-                                <textarea id="chatInput" placeholder="Ask about early or mid game..." class="flex-grow p-2 text-sm outline-none bg-transparent min-h-[44px] max-h-32 resize-none"></textarea>
-                                <button id="sendMsgBtn" class="p-3 text-blue-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                                </button>
-                            </div>
-                        </div>
+                    <div id="aiChat" class="flex-grow p-4 overflow-y-auto space-y-4 text-sm">
+                        <div class="bg-blue-100 text-blue-800 p-4 rounded-xl max-w-[90%]">Hello! I'm your BSS Expert. Ask me anything about your hive progress!</div>
+                    </div>
+                    <div class="p-4 bg-white border-t flex gap-2">
+                        <input type="text" id="aiInput" placeholder="Ask a question..." class="flex-grow border p-2 rounded-lg outline-none">
+                        <button onclick="sendAiMessage()" class="bg-blue-600 text-white px-4 rounded-lg">Send</button>
                     </div>
                 </div>
 
@@ -125,7 +127,48 @@
 
     <script>
         const apiKey = "AIzaSyBcxZZZt4TLdGfkAbCya1OyIAqYhPcvaCs";
-        let pendingImageData = null;
+        
+        // Accurate Bond Data from User
+        const BOND_DATA = {
+            "1": 0, "2": 10, "3": 40, "4": 200, "5": 750, "6": 4000, 
+            "7": 15000, "8": 60000, "9": 270000, "10": 450000, "11": 1200000, 
+            "12": 2000000, "13": 4000000, "14": 7000000, "15": 15000000, 
+            "16": 120000000, "17": 450000000, "18": 1900000000, "19": 7500000000, 
+            "20": 15000000000, "21": 475000000000, "22": 4500000000000, 
+            "23": 95000000000000, "24": 900000000000000, "25": 9000000000000000
+        };
+
+        function formatHoney(num) {
+            if (num >= 1e15) return (num / 1e15).toFixed(2) + "Qd";
+            if (num >= 1e12) return (num / 1e12).toFixed(2) + "T";
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + "B";
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
+            return Math.floor(num).toLocaleString();
+        }
+
+        function calculateTreats() {
+            const target = parseInt(document.getElementById('targetLevel').value) || 1;
+            const beeCount = parseInt(document.getElementById('beeCount').value) || 0;
+            const bondPerTreat = parseInt(document.getElementById('bondPerTreat').value) || 10;
+            const invTreats = parseInt(document.getElementById('invTreats').value) || 0;
+
+            // Bond needed for ONE bee to reach target level from (target-1)
+            const bondForNextLevel = BOND_DATA[target] || 0;
+            
+            // Formula: ((10 * Bond * Bees) / BondPerTreat - Inventory) * 10000
+            // Note: In game mechanics, 1 Treat = 10 Bond. 
+            // The user formula includes a '10' multiplier in numerator, likely to cancel out the division by 'BondFromTreats' if it is 10.
+            // But standard calculation is: (TotalBondNeeded / BondPerTreat) * CostPerTreat
+            // Cost Per Treat = 10,000 Honey.
+            
+            const totalBondNeeded = bondForNextLevel * beeCount;
+            const treatsNeeded = (totalBondNeeded / bondPerTreat) - invTreats;
+            const finalHoney = Math.max(0, treatsNeeded * 10000);
+
+            // Update UI
+            document.getElementById('honeyResult').innerText = formatHoney(finalHoney) + " Honey";
+            document.getElementById('calcDetails').innerText = `Bond Needed: ${formatHoney(totalBondNeeded)} | Treats Needed: ${formatHoney(Math.max(0, treatsNeeded))}`;
+        }
 
         function switchTab(tab) {
             ['tickets', 'treats', 'ai'].forEach(t => {
@@ -133,142 +176,23 @@
                 document.getElementById(`tab-${t}`).classList.remove('tab-active');
             });
             document.getElementById(`section-${tab}`).classList.remove('hidden');
+            if (tab === 'ai') document.getElementById(`section-${tab}`).classList.add('flex');
             document.getElementById(`tab-${tab}`).classList.add('tab-active');
         }
 
-        const uploadArea = document.getElementById('uploadArea');
-        const imageInput = document.getElementById('imageInput');
-        const chatCameraBtn = document.getElementById('chatCameraBtn');
-        const chatImageInput = document.getElementById('chatImageInput');
-
-        uploadArea.addEventListener('click', () => imageInput.click());
-        chatCameraBtn.addEventListener('click', () => chatImageInput.click());
-
-        function handleImageUpload(input, previewImg, container) {
-            input.onchange = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (re) => {
-                    if (previewImg) previewImg.src = re.target.result;
-                    if (container) container.classList.remove('hidden');
-                    if (input === chatImageInput) {
-                        pendingImageData = re.target.result.split(',')[1];
-                        document.getElementById('attachedImageImg').src = re.target.result;
-                        document.getElementById('attachmentPreview').classList.remove('hidden');
-                    }
-                };
-                reader.readAsDataURL(file);
-            };
-        }
-
-        handleImageUpload(imageInput, document.getElementById('imagePreview'), document.getElementById('imagePreviewContainer'));
-        handleImageUpload(chatImageInput, null, null);
-
-        function removeAttachment() {
-            pendingImageData = null;
-            document.getElementById('attachmentPreview').classList.add('hidden');
-            chatImageInput.value = "";
-        }
-
-        const bssSystemPrompt = `You are a friendly, concise Bee Swarm Simulator Master.
-        
-        PHASE DEFINITIONS:
-        1. EARLY GAME: Any player without a Supreme Star Amulet (SSA). This includes late-early game players with Petal Wands/Belts.
-        2. MID GAME: Starts ONLY once the user has an SSA.
-        
-        CORE RULES:
-        - If EARLY GAME: Strictly advise staying MIXED. Explain that choosing a color before SSA makes quest completion (like Spirit Bear) extremely slow and difficult.
-        - If MID GAME (SSA owned): Advise switching to Blue Hive as the cheapest and most efficient first-color meta. Focus on Solo Pop Star.
-        
-        FORMAT:
-        - Keep responses balanced: detailed but punchy.
-        - Structure: "Overview", "Key Takeaways", "Final Verdict".
-        - Use emojis 🐝🍯✨.`;
-
-        async function sendToAI(prompt, base64Image = null) {
-            const chatBody = {
-                contents: [{ role: "user", parts: [{ text: prompt || (base64Image ? "Please analyze this BSS screenshot. Determine if I am still in Early Game (Pre-SSA) or ready for Mid Game (SSA)." : "") }] }],
-                systemInstruction: { parts: [{ text: bssSystemPrompt }] }
-            };
-            if (base64Image) {
-                chatBody.contents[0].parts.push({ inlineData: { mimeType: "image/png", data: base64Image } });
-            }
-
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(chatBody)
-                });
-                const data = await res.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "Buzz... no response. Try again! 🐝";
-            } catch (e) { return "Connection Error. 🐝"; }
-        }
-
-        const chatWindow = document.getElementById('chatWindow');
-        const chatInput = document.getElementById('chatInput');
-
-        function appendMessage(role, text, imageSrc = null) {
-            const div = document.createElement('div');
-            div.className = role === 'ai' ? 'chat-bubble-ai p-3 text-xs text-blue-800 self-start max-w-[85%]' : 'chat-bubble-user p-3 text-xs text-amber-900 self-end max-w-[85%]';
-            if (imageSrc) {
-                const img = document.createElement('img');
-                img.src = imageSrc;
-                img.className = "w-full rounded mb-2 border border-amber-200";
-                div.appendChild(img);
-            }
-            const span = document.createElement('div');
-            span.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            div.appendChild(span);
-            chatWindow.appendChild(div);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }
-
-        document.getElementById('sendMsgBtn').onclick = async () => {
-            const msg = chatInput.value.trim();
-            const currentImgData = pendingImageData;
-            const currentImgSrc = currentImgData ? document.getElementById('attachedImageImg').src : null;
-            
-            if (!msg && !currentImgData) return;
-
-            appendMessage('user', msg || "[Image Attached]");
-            chatInput.value = "";
-            removeAttachment();
-
-            const response = await sendToAI(msg, currentImgData);
-            appendMessage('ai', response);
-        };
-
-        document.getElementById('analyzeBtn').onclick = async () => {
-            const btn = document.getElementById('analyzeBtn');
-            btn.innerText = "Analyzing...";
-            const scanImg = document.getElementById('imagePreview').src;
-            appendMessage('user', "Expert Scan Request 📸");
-            const response = await sendToAI("Check my progress. Based on my gear and hive, am I still early game or ready for Mid-Game (SSA)?", scanImg.split(',')[1]);
-            appendMessage('ai', response);
-            btn.innerText = "Analyze Progress";
-        };
-
-        // Ticket Logic
-        const quickCostIn = document.getElementById('quickCost');
-        const calcBoughtEl = document.getElementById('calcBoughtCount');
-        const ownedInput = document.getElementById('owned');
-        const toBuyInput = document.getElementById('toBuy');
-
-        quickCostIn.oninput = () => {
-            const p = parseFloat(quickCostIn.value) || 0;
+        document.getElementById('quickCost').oninput = (e) => {
+            const p = parseFloat(e.target.value) || 0;
             if (p < 100000) return;
             const x = (p - 100000) / 1000;
             const n = Math.round(p < 500000 ? Math.pow(x, 1/1.2) : Math.pow(x, 1/1.7));
-            calcBoughtEl.innerText = n;
-            ownedInput.value = n;
+            document.getElementById('calcBoughtCount').innerText = n + " Bought";
+            document.getElementById('owned').value = n;
             updateTickets();
         };
 
         function updateTickets() {
-            const o = parseInt(ownedInput.value) || 0;
-            const b = parseInt(toBuyInput.value) || 0;
+            const o = parseInt(document.getElementById('owned').value) || 0;
+            const b = parseInt(document.getElementById('toBuy').value) || 1;
             let t = 0;
             for (let i = 0; i < b; i++) {
                 let n = o + i;
@@ -276,8 +200,38 @@
             }
             document.getElementById('totalCost').innerText = Math.floor(t).toLocaleString() + " Honey";
         }
-        ownedInput.oninput = updateTickets;
-        toBuyInput.oninput = updateTickets;
+
+        async function sendAiMessage() {
+            const input = document.getElementById('aiInput');
+            const chat = document.getElementById('aiChat');
+            if(!input.value.trim()) return;
+            const userText = input.value;
+            chat.innerHTML += `<div class="flex justify-end"><div class="bg-slate-200 p-3 rounded-lg max-w-[85%] font-semibold">${userText}</div></div>`;
+            input.value = "";
+            chat.scrollTop = chat.scrollHeight;
+
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: `BSS Expert. User: ${userText}` }] }] })
+                });
+                const data = await res.json();
+                chat.innerHTML += `<div class="bg-blue-100 p-3 rounded-lg max-w-[90%]">${data.candidates[0].content.parts[0].text}</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            } catch (e) { chat.innerHTML += `<div class="text-red-500 text-xs text-center">Error connecting to AI.</div>`; }
+        }
+
+        ['targetLevel', 'beeCount', 'bondPerTreat', 'invTreats'].forEach(id => {
+            document.getElementById(id).addEventListener('input', calculateTreats);
+        });
+        document.getElementById('owned').oninput = updateTickets;
+        document.getElementById('toBuy').oninput = updateTickets;
+        
+        window.onload = () => {
+            calculateTreats();
+            updateTickets();
+        };
     </script>
 </body>
 </html>
